@@ -99,6 +99,20 @@ footer { text-align: center; padding: 32px 24px 48px; color: #aaa; font-size: 12
 
 .err-msg { display: none; background: #fdf0f0; border: 1px solid #f5c0c0; border-radius: 8px; padding: 12px; font-size: 13px; color: #8b2020; margin-bottom: 16px; }
 .err-msg.show { display: block; }
+
+/* 회비 입금 */
+.deposit-box { background: var(--green-light); border: 2px solid var(--green-dark); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; }
+.deposit-box .deposit-title { font-size: 15px; font-weight: 700; color: var(--green-dark); margin-bottom: 14px; }
+.deposit-row { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; font-size: 14px; }
+.deposit-row .k { color: var(--text-sub); flex-shrink: 0; margin-right: 12px; }
+.deposit-row .v { font-weight: 600; color: var(--text); text-align: right; }
+.deposit-row .v.amount { font-size: 18px; font-weight: 700; color: var(--green-dark); }
+.deposit-notice { margin-top: 12px; padding: 12px; background: white; border-radius: 8px; font-size: 13px; color: var(--green-dark); line-height: 1.7; }
+.deposit-notice strong { font-weight: 700; }
+.deposit-name-hint { margin-top: 8px; font-size: 13px; color: var(--accent); font-weight: 500; }
+.deposit-confirm { display: flex; align-items: flex-start; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 18px; }
+.deposit-confirm input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: var(--green-dark); cursor: pointer; }
+.deposit-confirm span { font-size: 14px; line-height: 1.6; color: var(--text); }
 </style>
 </head>
 <body>
@@ -212,41 +226,45 @@ footer { text-align: center; padding: 32px 24px 48px; color: #aaa; font-size: 12
       <div class="err-msg" id="errMsg"></div>
 
       <div class="form-group">
-        <label>이름 <span class="req">*</span></label>
-        <input type="text" id="f-name" placeholder="실명">
+        <label>이름 (또는 닉네임) <span class="req">*</span></label>
+        <input type="text" id="f-name" maxlength="8" placeholder="입금자명 · 챌린지 페이지 표시명">
+        <div class="hint">입금자명과 챌린지 페이지에 표시될 이름이에요. (최대 8자)</div>
       </div>
       <div class="form-group">
         <label>연락처 <span class="req">*</span></label>
         <input type="tel" id="f-phone" placeholder="010-0000-0000" inputmode="tel">
       </div>
-      <div class="form-group">
-        <label>닉네임 <span class="req">*</span></label>
-        <input type="text" id="f-nick" maxlength="8" placeholder="챌린지 페이지에서 쓸 이름">
-        <div class="hint">인증 페이지에 표시될 이름이에요. (최대 8자)</div>
-      </div>
-      <div class="form-group">
-        <label>카카오톡 ID <span style="font-weight:400;color:#bbb">(선택)</span></label>
-        <input type="text" id="f-kakao" placeholder="오픈채팅 초대용">
-      </div>
-      <div class="form-group">
-        <label>챌린지 참여 경험 <span class="req">*</span></label>
-        <select id="f-exp">
-          <option value="">선택해주세요</option>
-          <option value="첫 참여">이번이 처음이에요</option>
-          <option value="참여 경험 있음">전에 참여한 적 있어요</option>
-        </select>
-        <div class="hint">첫 참여 시 회비 전액(10,000원)을 리워드로 돌려드려요!</div>
-      </div>
-      <div class="form-group">
-        <label>신청 월 <span class="req">*</span></label>
-        <select id="f-month"></select>
-      </div>
-      <div class="form-group">
-        <label>문의사항 <span style="font-weight:400;color:#bbb">(선택)</span></label>
-        <textarea id="f-note" rows="3" maxlength="200" placeholder="궁금한 점이 있다면 적어주세요"></textarea>
+
+      <div class="deposit-box">
+        <div class="deposit-title">💳 회비 입금</div>
+        <div class="deposit-row">
+          <span class="k">입금액</span>
+          <span class="v amount">10,000원</span>
+        </div>
+        <div class="deposit-row">
+          <span class="k">은행</span>
+          <span class="v">카카오뱅크 (모임통장)</span>
+        </div>
+        <div class="deposit-row">
+          <span class="k">계좌번호</span>
+          <span class="v">7942-33-45474</span>
+        </div>
+        <div class="deposit-row">
+          <span class="k">예금주</span>
+          <span class="v">경규환</span>
+        </div>
+        <div class="deposit-notice">
+          입금자명은 <strong>위에 입력한 이름(또는 닉네임)과 동일하게</strong> 보내주세요.
+          <div class="deposit-name-hint" id="depositNameHint">이름을 입력하면 입금자명이 표시돼요.</div>
+        </div>
       </div>
 
-      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">신청하기 ✍️</button>
+      <label class="deposit-confirm" for="f-deposit">
+        <input type="checkbox" id="f-deposit">
+        <span>위 계좌로 회비 10,000원을 입금했어요. (입금 확인 후 신청이 완료됩니다)</span>
+      </label>
+
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()" disabled>신청하기 ✍️</button>
     </section>
 
     <footer>
@@ -261,8 +279,8 @@ footer { text-align: center; padding: 32px 24px 48px; color: #aaa; font-size: 12
     <h2>신청이 완료됐어요!</h2>
     <p>
       접수해주셔서 감사해요.<br>
-      회비 입금 및 오픈채팅 안내를<br>
-      연락처로 보내드릴게요.<br><br>
+      입금 확인이 완료되면<br>
+      오픈채팅 안내를 연락처로 보내드릴게요.<br><br>
       <span style="font-size:13px;color:#aaa">먼저 오픈채팅에 들어오셔도 좋아요 👇</span>
     </p>
     <!-- 오픈채팅 링크를 여기에 넣으세요 -->
@@ -278,22 +296,30 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmKpptDy_rt4SUMf4LT
 // 카카오 오픈채팅 링크 (있으면 넣기, 없으면 빈 문자열)
 const KAKAO_OPENCHAT_URL = '';
 
-// 신청 월 옵션: 이번 달 + 다음 달
-(function initMonths() {
-  const sel = document.getElementById('f-month');
+// 신청 월 뱃지
+(function initMonthBadge() {
   const now = new Date();
   const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  for (let i = 0; i < 2; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-    const key = `${d.getFullYear()}년 ${months[d.getMonth()]}`;
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = key + (i === 0 ? ' (이번 달)' : ' (다음 달)');
-    sel.appendChild(opt);
-  }
-  // 히어로 뱃지
   document.getElementById('monthBadge').textContent =
     `${now.getFullYear()}년 ${months[now.getMonth()]} 모집 중`;
+})();
+
+(function initDepositConfirm() {
+  const nameInput = document.getElementById('f-name');
+  const depositCheck = document.getElementById('f-deposit');
+  const submitBtn = document.getElementById('submitBtn');
+  const nameHint = document.getElementById('depositNameHint');
+
+  function updateDepositUI() {
+    const name = nameInput.value.trim();
+    nameHint.textContent = name
+      ? `입금자명: ${name}`
+      : '이름을 입력하면 입금자명이 표시돼요.';
+    submitBtn.disabled = !depositCheck.checked;
+  }
+
+  nameInput.addEventListener('input', updateDepositUI);
+  depositCheck.addEventListener('change', updateDepositUI);
 })();
 
 function showError(msg) {
@@ -307,22 +333,19 @@ async function submitForm() {
   document.getElementById('errMsg').classList.remove('show');
 
   const data = {
-    action: 'challengeApply', // 기존 Apps Script doPost 라우팅용
+    action: 'challengeApply',
     name: document.getElementById('f-name').value.trim(),
     phone: document.getElementById('f-phone').value.trim(),
-    nick: document.getElementById('f-nick').value.trim(),
-    kakao: document.getElementById('f-kakao').value.trim(),
-    experience: document.getElementById('f-exp').value,
-    month: document.getElementById('f-month').value,
-    note: document.getElementById('f-note').value.trim()
+    nick: document.getElementById('f-name').value.trim(),
+    depositConfirmed: true
   };
 
   // 검증
-  if (!data.name) return showError('이름을 입력해주세요.');
+  if (!data.name) return showError('이름(또는 닉네임)을 입력해주세요.');
   if (!data.phone) return showError('연락처를 입력해주세요.');
-  if (!data.nick) return showError('닉네임을 입력해주세요.');
-  if (!data.experience) return showError('참여 경험을 선택해주세요.');
-  if (!data.month) return showError('신청 월을 선택해주세요.');
+  if (!document.getElementById('f-deposit').checked) {
+    return showError('회비 입금 후 확인 체크를 해주세요.');
+  }
 
   if (!SCRIPT_URL) {
     return showError('아직 접수 서버(SCRIPT_URL)가 설정되지 않았어요. 운영자에게 문의해주세요.');
@@ -343,7 +366,7 @@ async function submitForm() {
     // fetch가 reject되지 않으면 성공으로 간주
     showDone();
   } catch (e) {
-    btn.disabled = false;
+    btn.disabled = !document.getElementById('f-deposit').checked;
     btn.textContent = '신청하기 ✍️';
     showError('신청 중 오류가 났어요. 잠시 후 다시 시도하거나 오픈채팅으로 문의해주세요.');
   }
